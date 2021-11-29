@@ -27,6 +27,11 @@ function calculateWinner(squares: string[]) {
   return null;
 }
 
+// 数组拷贝
+function arrayClone(ary:string[]){
+  return JSON.parse(JSON.stringify(ary))
+}
+
 export default function Game() {
   // 历史
   const [history, setHistory] = useState<string[][]>([Array(9).fill('')]);
@@ -60,16 +65,25 @@ export default function Game() {
   //  重置游戏
   const resetGame = function (index: number) {
     // 根据传入index来判断是重置到某一个历史，还是游戏结束的重置
-    if (index !== -1) {
-      setList(history[index].splice(0));
-      setHistory(history.concat([history[index].splice(0)]));
+    if (index !== -1 && history[index].length) {
+      const listCopy = arrayClone(history[index])
+      setList(history[index]);
+      // setHistory(history.concat([listCopy]));
+      const code = index % 2 === 0?'X':'O'
+      setXorO(index % 2 === 0?'X':'O')
+      setTitle('next ' + code);
     } else {
       setList(Array(9).fill(''));
       setHistory(history.concat([Array(9).fill('')]));
       setIsDisabled(false);
+      setXorO('X')
       setTitle('next X');
     }
   };
+
+  const clearHistory = function(){
+    setHistory(history.splice(-1))
+  }
 
   const hanldOnClick = (index: number) => {
     if (list[index] !== '') return;
@@ -94,11 +108,14 @@ export default function Game() {
         ></Board>
       </div>
       <div className={style['button-wrapper']}>
-        <input className={style.oper} type="text" />
-        <button className={style.oper} onClick={() => resetGame(-1)}>重置</button>
-        <button className={style.oper} >上一步</button>
-        <button className={style.oper} >下一步</button>
+        <button className={style.oper} onClick={() => resetGame(-1)}>
+          重置
+        </button>
+        <button className={style.oper} onClick={() => clearHistory()}>
+          清除历史
+        </button>
         <dl className={style['history-list']}>
+          <dt>历史记录：</dt>
           {history.map((item, index) => {
             return (
               <dd key={index}>
@@ -106,7 +123,7 @@ export default function Game() {
               </dd>
             );
           })}
-      </dl>
+        </dl>
       </div>
     </div>
   );
