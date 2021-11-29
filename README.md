@@ -1,15 +1,2 @@
-# umi project
-
-## Getting Started
-
-Install dependencies,
-
-```bash
-$ yarn
-```
-
-Start the dev server,
-
-```bash
-$ yarn start
+**初学react用来练手的井字棋**
 ```
